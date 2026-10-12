@@ -133,11 +133,11 @@ export function createSearchIndex(
   const asyncApiEntries = new Set<string>()
 
   /** Recursively processes entries and their children to build the search index. */
-  function processEntries(entriesToProcess: TraversedEntry[], parentType?: TraversedEntry['type']): void {
+  function processEntries(entriesToProcess: TraversedEntry[]): void {
     entriesToProcess.forEach((entry) => {
       if (isAsyncApiDocument(document) && entry.type.startsWith('asyncapi-')) {
-        // Messages also appear under operations. Prefer their channel catalog anchor, and
-        // collapse repeated tag appearances without merging distinct channels sharing a message.
+        // Messages can live under operations or directly under channels. Keep the first rendered
+        // anchor and collapse repeated appearances without merging messages from distinct channels.
         let key = entry.id
         if (entry.type === 'asyncapi-message') {
           key = JSON.stringify([entry.type, entry.channelName, entry.messageName])
@@ -146,7 +146,7 @@ export function createSearchIndex(
         } else if (entry.type === 'asyncapi-operation') {
           key = JSON.stringify([entry.type, entry.operationName])
         }
-        if (!(entry.type === 'asyncapi-message' && parentType === 'asyncapi-operation') && !asyncApiEntries.has(key)) {
+        if (!asyncApiEntries.has(key)) {
           const result = createAsyncApiSearchEntry(document, entry)
           if (result) {
             index.push(result)
@@ -159,7 +159,7 @@ export function createSearchIndex(
 
       // Recursively process children if they exist
       if ('children' in entry && entry.children) {
-        processEntries(entry.children, entry.type)
+        processEntries(entry.children)
       }
     })
   }
