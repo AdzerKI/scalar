@@ -10,7 +10,7 @@ import type {
   AsyncApiMessageObject,
 } from '@scalar/types/asyncapi/3.1'
 import type { WorkspaceEventBus } from '@scalar/workspace-store/events'
-import { getResolvedRef } from '@scalar/workspace-store/helpers/get-resolved-ref'
+import { getResolvedAsyncApiRef } from '@scalar/workspace-store/helpers/get-resolved-async-api-ref'
 import type { TraversedAsyncApiMessage } from '@scalar/workspace-store/schemas/navigation'
 import { computed, nextTick, ref, useId, useTemplateRef, watch } from 'vue'
 
@@ -99,7 +99,7 @@ const messageBindingProtocols = computed(() => {
   if (!bindings) {
     return []
   }
-  const resolved = getResolvedRef(bindings)
+  const resolved = getResolvedAsyncApiRef(bindings)
   return Object.entries(resolved ?? {})
     .filter(([, value]) => value != null)
     .map(([protocol]) => protocol.toLowerCase())
@@ -134,7 +134,7 @@ const headersSchema = computed(() =>
 
 const correlationId = computed<
   Exclude<AsyncApiMessageObject['correlationId'], { $ref: string }>
->(() => getResolvedRef(resolvedMessage.value?.correlationId))
+>(() => getResolvedAsyncApiRef(resolvedMessage.value?.correlationId))
 const correlationTarget = computed<ReturnType<typeof getCorrelationIdTarget>>(
   () =>
     resolvedMessage.value && correlationId.value?.location

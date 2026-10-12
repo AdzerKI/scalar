@@ -1,7 +1,8 @@
 import { isObject } from '@scalar/helpers/object/is-object'
 import type { AsyncApiMessageObject } from '@scalar/types/asyncapi/3.1'
+import { getAsyncApiSchemaView } from '@scalar/workspace-store/helpers/get-async-api-schema-view'
 import { getBooleanSchema } from '@scalar/workspace-store/helpers/get-boolean-schema'
-import { getResolvedRef } from '@scalar/workspace-store/helpers/get-resolved-ref'
+import { getResolvedAsyncApiRef } from '@scalar/workspace-store/helpers/get-resolved-async-api-ref'
 import type { SchemaObject } from '@scalar/workspace-store/schemas/v3.2/strict/openapi-document'
 
 /**
@@ -27,11 +28,14 @@ export const unwrapAsyncApiSchema = (value: unknown): SchemaObject | undefined =
     return undefined
   }
 
-  // Resolve the value the same way OpenAPI model rendering does (plain `$ref-value`).
-  const resolved = getResolvedRef(value)
+  // Resolve AsyncAPI Reference Objects before inspecting their schema format.
+  const resolved = getResolvedAsyncApiRef(value)
 
   // Multi Format Schema Objects carry the real schema under `schema`; unwrap to that payload.
-  const schema = isObject(resolved) && 'schemaFormat' in resolved ? getResolvedRef(resolved.schema) : resolved
+  const schema =
+    isObject(resolved) && 'schemaFormat' in resolved
+      ? getAsyncApiSchemaView(getResolvedAsyncApiRef(resolved.schema), String(resolved.schemaFormat))
+      : getAsyncApiSchemaView(resolved)
 
   return typeof schema === 'boolean' ? getBooleanSchema(schema) : isSchemaObject(schema) ? schema : undefined
 }

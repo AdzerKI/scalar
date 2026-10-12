@@ -6,7 +6,7 @@ import {
   getChannelReachability,
   getOperationReachability,
 } from '@scalar/workspace-store/channel-example'
-import { getResolvedRef, mergeSiblingReferences } from '@scalar/workspace-store/helpers/get-resolved-ref'
+import { getResolvedAsyncApiRef } from '@scalar/workspace-store/helpers/get-resolved-async-api-ref'
 import type { TraversedEntry } from '@scalar/workspace-store/schemas/navigation'
 
 /** The currently selected sidebar filters. Empty / sentinel values disable a filter. */
@@ -52,11 +52,13 @@ const filterEntry = (
       return entry
     }
 
-    // Resolve the same way the navigation traversal did, so sibling overrides
-    // (e.g. an inline `channel` alongside a `$ref`) are honored consistently.
-    const operation = getResolvedRef(operationNode, mergeSiblingReferences)
+    // Use the same target as navigation, ignoring any sibling channel override.
+    const operation = getResolvedAsyncApiRef(operationNode)
 
     // Resolve the operation's reachability once, then test both selections against it.
+    if (!operation) {
+      return entry
+    }
     const { protocols, serverNames } = getOperationReachability(document, operation, context)
     const keep = selectionMatches(protocols, filter.protocol) && selectionMatches(serverNames, filter.server)
 
@@ -66,7 +68,10 @@ const filterEntry = (
   if (entry.type === 'asyncapi-channel' && !entry.children?.some((child) => child.type === 'asyncapi-operation')) {
     const channelNode = document.channels?.[entry.channelName]
     if (channelNode) {
-      const channel = getResolvedRef(channelNode, mergeSiblingReferences)
+      const channel = getResolvedAsyncApiRef(channelNode)
+      if (!channel) {
+        return entry
+      }
       const { protocols, serverNames } = getChannelReachability(document, channel, context)
       if (!selectionMatches(protocols, filter.protocol) || !selectionMatches(serverNames, filter.server)) {
         return null
@@ -80,7 +85,10 @@ const filterEntry = (
       return entry
     }
 
-    const channel = getResolvedRef(channelNode, mergeSiblingReferences)
+    const channel = getResolvedAsyncApiRef(channelNode)
+    if (!channel) {
+      return entry
+    }
     const { protocols, serverNames } = getChannelReachability(document, channel, context)
     return selectionMatches(protocols, filter.protocol) && selectionMatches(serverNames, filter.server) ? entry : null
   }

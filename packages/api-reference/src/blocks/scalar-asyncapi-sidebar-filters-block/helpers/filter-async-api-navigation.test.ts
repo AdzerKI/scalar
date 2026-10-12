@@ -64,6 +64,24 @@ const entries: TraversedEntry[] = [
 const channelIds = (result: TraversedEntry[]) => result.map((entry) => entry.id)
 
 describe('filterAsyncApiNavigation', () => {
+  it('uses the referenced operation channel instead of its sibling override', () => {
+    const referenced = {
+      ...document,
+      operations: {
+        ...document.operations,
+        receiveSensor: {
+          $ref: '#/components/operations/Receive',
+          '$ref-value': document.operations?.receiveSensor,
+          channel: { $ref: '#/channels/wsChat' },
+        },
+      },
+    } as unknown as AsyncApiDocument
+    expect(channelIds(filterAsyncApiNavigation(entries, referenced, { protocol: 'mqtt' }))).toStrictEqual([
+      'mqttEvents',
+    ])
+    expect(channelIds(filterAsyncApiNavigation(entries, referenced, { protocol: 'wss' }))).toStrictEqual(['wsChat'])
+  })
+
   it.each<{ children: TraversedEntry[] }>([
     { children: [] },
     {
