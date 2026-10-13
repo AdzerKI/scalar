@@ -408,12 +408,12 @@ const triggerAnchorId = computed<string | undefined>(() =>
           is="div"
           :breadcrumb="schemaBreadcrumb"
           compact
+          :extensionSource="'in' in parameter ? parameter : undefined"
           :description="
             collapsableItems && !isStaticTreeItem ? '' : parameter.description
           "
           :eventBus="eventBus"
           :expansion="expansion"
-          :extensionSource="'in' in parameter ? parameter : undefined"
           :hideWriteOnly="true"
           :modelName="schemaModelName"
           :name="collapsableItems && !isStaticTreeItem ? '' : name"
@@ -468,8 +468,8 @@ const triggerAnchorId = computed<string | undefined>(() =>
           :orderRequiredPropertiesFirst="options.orderRequiredPropertiesFirst"
           :orderSchemaPropertiesBy="options.orderSchemaPropertiesBy"
           :schemaKeyboardNav="options.schemaKeyboardNav"
-          :scrollTargetId="scrollTargetId"
           :showExtensions="options.showExtensions"
+          :scrollTargetId="scrollTargetId"
           :specificationExtension="specificationExtension" />
       </component>
       <div
