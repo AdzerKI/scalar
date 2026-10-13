@@ -24,6 +24,7 @@ import {
 import { useIntersection } from '@/hooks/use-intersection'
 
 import AsyncApiLabels from './AsyncApiLabels.vue'
+import Bindings from './Bindings.vue'
 import {
   resolveSchemaRenderOptions,
   type AsyncApiSchemaRenderOptions,
@@ -255,13 +256,23 @@ const { level: headingLevel } = useDocumentOutline(
 
       <div class="message-layout">
         <div
-          v-if="description || correlationId || headersSchema || payloadSchema"
+          v-if="
+            description ||
+            correlationId ||
+            headersSchema ||
+            payloadSchema ||
+            resolvedMessage?.bindings
+          "
           class="message-details min-w-0">
           <ScalarMarkdown
             v-if="description"
             class="message-description"
             :value="description"
             withImages />
+
+          <Bindings
+            :bindings="resolvedMessage?.bindings"
+            class="mt-3" />
 
           <div
             v-if="correlationId"

@@ -19,6 +19,7 @@ import SecurityRequirementBadge from '@/features/Operation/components/SecurityRe
 import type { RequiredSecurity } from '@/features/Operation/helpers/get-required-security'
 import { useIntersection } from '@/hooks/use-intersection'
 
+import Bindings from './Bindings.vue'
 import type { AsyncApiSchemaRenderOptions } from './helpers/async-api-render-options'
 import { filterChildrenByType } from './helpers/filter-children-by-type'
 import { getAsyncApiRequiredSecurity } from './helpers/get-async-api-required-security'
@@ -129,6 +130,10 @@ const messagesHeadingLevel = Math.min(6, headingLevel + 1) as HeadingLevel
       class="operation-description"
       :value="description"
       withImages />
+
+    <Bindings
+      :bindings="resolvedOperation?.bindings"
+      class="mt-4" />
 
     <SectionHeaderTag
       v-if="messages.length"

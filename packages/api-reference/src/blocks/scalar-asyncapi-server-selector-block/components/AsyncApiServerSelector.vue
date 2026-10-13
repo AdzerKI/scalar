@@ -30,6 +30,8 @@ import { getResolvedRef } from '@scalar/workspace-store/helpers/get-resolved-ref
 import type { ServerVariableObject } from '@scalar/workspace-store/schemas/v3.2/strict/openapi-document'
 import { computed, useId } from 'vue'
 
+import Bindings from '@/components/Content/AsyncApi/Bindings.vue'
+import { getBindingEntries } from '@/components/Content/AsyncApi/helpers/get-binding-entries'
 import { useLocalization } from '@/features/localization'
 
 import Selector from './Selector.vue'
@@ -80,7 +82,8 @@ const hasServerDetails = computed(() =>
   Boolean(
     serverSummary.value ||
     serverProtocolVersion.value ||
-    selectedServer?.description,
+    selectedServer?.description ||
+    getBindingEntries(selectedServer?.server.bindings).length,
   ),
 )
 
@@ -138,5 +141,8 @@ const updateServerVariable = (key: string, value: string) => {
     <ScalarMarkdown
       v-if="selectedServer?.description"
       :value="selectedServer.description" />
+    <Bindings
+      :bindings="selectedServer?.server.bindings"
+      class="my-2" />
   </div>
 </template>
