@@ -118,7 +118,7 @@ import {
   INTRODUCTION_ENTRY_ID_SUFFIX,
   isIntroductionEntry,
 } from '@/helpers/is-introduction-entry'
-import { provideLazyBus } from '@/helpers/lazy-bus'
+import { useLazyBusContext } from '@/helpers/lazy-bus'
 import {
   loadAuthFromStorage,
   loadClientFromStorage,
@@ -152,7 +152,7 @@ const {
   blockIntersection,
   intersectionEnabled,
   scrollTargetId,
-} = provideLazyBus()
+} = useLazyBusContext()
 
 defineSlots<{
   'content-start'?(): { breadcrumb: string }
