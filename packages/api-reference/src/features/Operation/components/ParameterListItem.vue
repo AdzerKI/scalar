@@ -29,7 +29,7 @@ import { computed, ref, watch } from 'vue'
 
 import { useLocalization } from '@/features/localization'
 import type { OperationProps } from '@/features/Operation/Operation.vue'
-import { isOnScrollTargetPath } from '@/helpers/lazy-bus'
+import { useLazyBusContext } from '@/helpers/lazy-bus'
 
 import ContentTypeSelect from './ContentTypeSelect.vue'
 import Headers from './Headers.vue'
@@ -68,6 +68,8 @@ const {
 const emit = defineEmits<{
   (e: 'update:selectedContentType', value: string): void
 }>()
+
+const { isOnScrollTargetPath } = useLazyBusContext()
 
 const { translate } = useLocalization()
 
@@ -408,12 +410,12 @@ const triggerAnchorId = computed<string | undefined>(() =>
           is="div"
           :breadcrumb="schemaBreadcrumb"
           compact
-          :extensionSource="'in' in parameter ? parameter : undefined"
           :description="
             collapsableItems && !isStaticTreeItem ? '' : parameter.description
           "
           :eventBus="eventBus"
           :expansion="expansion"
+          :extensionSource="'in' in parameter ? parameter : undefined"
           :hideWriteOnly="true"
           :modelName="schemaModelName"
           :name="collapsableItems && !isStaticTreeItem ? '' : name"
@@ -468,8 +470,8 @@ const triggerAnchorId = computed<string | undefined>(() =>
           :orderRequiredPropertiesFirst="options.orderRequiredPropertiesFirst"
           :orderSchemaPropertiesBy="options.orderSchemaPropertiesBy"
           :schemaKeyboardNav="options.schemaKeyboardNav"
-          :showExtensions="options.showExtensions"
           :scrollTargetId="scrollTargetId"
+          :showExtensions="options.showExtensions"
           :specificationExtension="specificationExtension" />
       </component>
       <div
