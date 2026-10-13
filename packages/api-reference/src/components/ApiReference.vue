@@ -118,7 +118,13 @@ import {
   INTRODUCTION_ENTRY_ID_SUFFIX,
   isIntroductionEntry,
 } from '@/helpers/is-introduction-entry'
-import { useLazyBusContext } from '@/helpers/lazy-bus'
+import {
+  scrollToLazy as _scrollToLazy,
+  addToPriorityQueue,
+  blockIntersection,
+  intersectionEnabled,
+  scrollTargetId,
+} from '@/helpers/lazy-bus'
 import {
   loadAuthFromStorage,
   loadClientFromStorage,
@@ -145,14 +151,6 @@ const props = defineProps<{
    */
   configuration?: AnyApiReferenceConfiguration
 }>()
-
-const {
-  scrollToLazy: _scrollToLazy,
-  addToPriorityQueue,
-  blockIntersection,
-  intersectionEnabled,
-  scrollTargetId,
-} = useLazyBusContext()
 
 defineSlots<{
   'content-start'?(): { breadcrumb: string }
@@ -849,21 +847,10 @@ const contextChain = computed(() => {
   return crumbs
 })
 
-const documentElement = useTemplateRef<HTMLElement>('documentEl')
-const getDocumentRoot = (): Document | ShadowRoot => {
-  const root = documentElement.value?.getRootNode()
-  return root instanceof ShadowRoot ? root : document
-}
-
 const scrollToLazyElement = (id: string) => {
   setBreadcrumb(id)
   sidebarState.setSelected(id)
-  _scrollToLazy(
-    id,
-    sidebarState.setExpanded,
-    sidebarState.getEntryById,
-    getDocumentRoot(),
-  )
+  _scrollToLazy(id, sidebarState.setExpanded, sidebarState.getEntryById)
 }
 
 /**
@@ -1756,7 +1743,7 @@ useIntersection(
   {
     onExit: () => {
       const centerY = window.innerHeight / 2
-      const section = getDocumentRoot()
+      const section = document
         .elementsFromPoint(window.innerWidth / 2, centerY)
         .find((el) => el.tagName === 'SECTION' && el.id)
 

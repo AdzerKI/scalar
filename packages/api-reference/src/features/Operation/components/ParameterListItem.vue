@@ -29,7 +29,7 @@ import { computed, ref, watch } from 'vue'
 
 import { useLocalization } from '@/features/localization'
 import type { OperationProps } from '@/features/Operation/Operation.vue'
-import { useLazyBusContext } from '@/helpers/lazy-bus'
+import { isOnScrollTargetPath } from '@/helpers/lazy-bus'
 
 import ContentTypeSelect from './ContentTypeSelect.vue'
 import Headers from './Headers.vue'
@@ -68,8 +68,6 @@ const {
 const emit = defineEmits<{
   (e: 'update:selectedContentType', value: string): void
 }>()
-
-const { isOnScrollTargetPath } = useLazyBusContext()
 
 const { translate } = useLocalization()
 

@@ -52,7 +52,10 @@ import { RenderPlugins } from '@/components/RenderPlugins'
 import { SectionFlare } from '@/components/SectionFlare'
 import { provideDocumentOutline } from '@/features/document-outline'
 import { getXKeysFromObject } from '@/features/specification-extension'
-import { useLazyBusContext } from '@/helpers/lazy-bus'
+import {
+  firstLazyLoadComplete,
+  scheduleInitialLoadComplete,
+} from '@/helpers/lazy-bus'
 
 const {
   document,
@@ -114,9 +117,6 @@ const {
     headingSlugGenerator: (heading: Heading) => string
   } & SchemaRenderingProps
 >()
-
-const { firstLazyLoadComplete, scheduleInitialLoadComplete } =
-  useLazyBusContext()
 
 /** Generate all client options so that it can be shared between the top client picker and the operations */
 const clientOptions = computed(() =>

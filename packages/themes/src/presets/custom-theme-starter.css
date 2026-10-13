@@ -1,8 +1,7 @@
 /**
   Custom Theme Starter
 */
-:root,
-:host {
+:root {
   --scalar-border-width: 1px;
 
   /**
@@ -42,8 +41,7 @@
 }
 
 @media (max-width: 720px) {
-  :root,
-  :host {
+  :root {
     --scalar-heading-1: 24px;
     --scalar-page-description: 20px;
   }

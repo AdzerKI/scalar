@@ -1,5 +1,4 @@
-:root,
-:host {
+:root {
   --scalar-border-width: 0.5px;
 
   /**
@@ -127,8 +126,7 @@
   color-scheme: dark !important;
 }
 @media (max-width: 460px) {
-  :root,
-  :host {
+  :root {
     --scalar-font-size-1: 22px;
     --scalar-font-size-2: 14px;
     --scalar-font-size-3: 12px;
@@ -136,8 +134,7 @@
 }
 
 @media (max-width: 720px) {
-  :root,
-  :host {
+  :root {
     --scalar-heading-1: 24px;
     --scalar-page-description: 20px;
   }
@@ -151,8 +148,7 @@
  */
 @media (max-resolution: 1.5dppx) {
   @supports (-moz-appearance: none) {
-    :root,
-    :host {
+    :root {
       --scalar-border-width: 1px;
     }
   }
