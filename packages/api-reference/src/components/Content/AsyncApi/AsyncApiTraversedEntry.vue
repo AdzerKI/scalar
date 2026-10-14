@@ -20,9 +20,10 @@ import Model from '@/components/Content/Models/Model.vue'
 import ModelTag from '@/components/Content/Models/ModelTag.vue'
 import { Tag } from '@/components/Content/Tags'
 import Lazy from '@/components/Lazy/Lazy.vue'
-import { getAsyncApiModelSchema } from '@/helpers/get-async-api-model-schema'
+import { resolveAsyncApiSchema } from '@/helpers/resolve-async-api-schema'
 
 import Channel from './Channel.vue'
+import SourceModel from './SourceModel.vue'
 
 const {
   entries,
@@ -86,13 +87,20 @@ const componentSchemas = computed(() =>
     : undefined,
 )
 
-/** Resolve a schema by name into the shape the shared Model component expects. */
-const getModelSchema = (name: string) => getAsyncApiModelSchema(document, name)
+/** Resolve once per entry and retain source-only models alongside JSON Schema models. */
+const resolvedEntries = computed(() =>
+  entries.map((entry) => ({
+    entry,
+    schema: isModel(entry)
+      ? resolveAsyncApiSchema(componentSchemas.value?.[entry.name])
+      : undefined,
+  })),
+)
 </script>
 
 <template>
   <Lazy
-    v-for="entry in entries"
+    v-for="{ entry, schema } in resolvedEntries"
     :id="entry.id"
     :key="`${entry.id}-${options.layout}`"
     :expanded="!!expandedItems[entry.id]">
@@ -166,15 +174,24 @@ const getModelSchema = (name: string) => getAsyncApiModelSchema(document, name)
     </ModelTag>
 
     <Model
-      v-else-if="isModel(entry) && getModelSchema(entry.name)"
+      v-else-if="isModel(entry) && schema?.kind === 'schema'"
       :id="entry.id"
       :eventBus="eventBus"
       :expansion="expansion"
       :isCollapsed="!expandedItems[entry.id]"
       :name="entry.name"
       :options="options"
-      :schema="getModelSchema(entry.name)"
+      :schema="schema.schema"
       :scrollTargetId="scrollTargetId"
       :specificationExtension="specificationExtension" />
+    <SourceModel
+      v-else-if="isModel(entry) && schema?.kind === 'source'"
+      :id="entry.id"
+      :eventBus="eventBus"
+      :format="schema.format"
+      :isCollapsed="!expandedItems[entry.id]"
+      :layout="options.layout"
+      :name="entry.name"
+      :value="schema.value" />
   </Lazy>
 </template>
