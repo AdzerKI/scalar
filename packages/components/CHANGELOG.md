@@ -1,5 +1,11 @@
 # @scalar/components
 
+## 0.32.0
+
+### Minor Changes
+
+- [#10552](https://github.com/scalar/scalar/pull/10552): Search combobox options asynchronously: bind the search text with `v-model:query`, skip client-side filtering with a `filterFn` that returns the options as given, show a spinner or error mark in the search field with `loader`, and add content to the end of the search field with the `search-end` slot.
+
 ## 0.31.1
 
 ### Patch Changes

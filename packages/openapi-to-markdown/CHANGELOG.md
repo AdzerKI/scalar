@@ -1,5 +1,7 @@
 # @scalar/openapi-to-markdown
 
+## 1.5.5
+
 ## 1.5.4
 
 ### Patch Changes

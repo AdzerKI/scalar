@@ -1,5 +1,7 @@
 # @scalar/api-client
 
+## 3.23.1
+
 ## 3.23.0
 
 ### Minor Changes
